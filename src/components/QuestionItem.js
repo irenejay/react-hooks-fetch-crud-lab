@@ -1,7 +1,23 @@
 import React from "react";
 
-function QuestionItem({ question }) {
+function QuestionItem({ question, onDeleteQuestion }) {
   const { id, prompt, answers, correctIndex } = question;
+
+  const handleDelete = () => {
+    // Delete question from the server
+    fetch(`http://localhost:4000/questions/${id}`, {
+      method: "DELETE"
+    })
+    .then(response => {
+      if (response.ok) {
+        // Delete question from the client-side state
+        onDeleteQuestion(id);
+      } else {
+        throw new Error("Failed to delete question from server");
+      }
+    })
+    .catch(error => console.error("Error deleting question:", error));
+  };
 
   const options = answers.map((answer, index) => (
     <option key={index} value={index}>
@@ -17,7 +33,7 @@ function QuestionItem({ question }) {
         Correct Answer:
         <select defaultValue={correctIndex}>{options}</select>
       </label>
-      <button>Delete Question</button>
+      <button onClick={handleDelete}>Delete Question</button>
     </li>
   );
 }

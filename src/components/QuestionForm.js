@@ -19,7 +19,35 @@ function QuestionForm(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(formData);
+    
+    // Send POST request to the API
+    fetch("http://localhost:4000/questions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: formData.prompt,
+        answers: [formData.answer1, formData.answer2, formData.answer3, formData.answer4],
+        correctIndex: parseInt(formData.correctIndex)
+      })
+    })
+    .then(response => response.json())
+    .then(newQuestion => {
+      // Update the state in the parent component to display the new question
+      props.onQuestionSubmit(newQuestion);
+      
+      // Reset form data after successful submission
+      setFormData({
+        prompt: "",
+        answer1: "",
+        answer2: "",
+        answer3: "",
+        answer4: "",
+        correctIndex: 0,
+      });
+    })
+    .catch(error => console.error("Error submitting question:", error));
   }
 
   return (
@@ -78,10 +106,10 @@ function QuestionForm(props) {
             value={formData.correctIndex}
             onChange={handleChange}
           >
-            <option value="0">{formData.answer1}</option>
-            <option value="1">{formData.answer2}</option>
-            <option value="2">{formData.answer3}</option>
-            <option value="3">{formData.answer4}</option>
+            <option value="0">1</option>
+            <option value="1">2</option>
+            <option value="2">3</option>
+            <option value="3">4</option>
           </select>
         </label>
         <button type="submit">Add Question</button>
